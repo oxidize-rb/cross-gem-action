@@ -105,7 +105,7 @@ function loadInput() {
         directory,
         env: (0, core_1.getInput)('env') || null,
         command: (0, core_1.getInput)('command') ||
-            `bundle --local || true; rake native:${platform} gem`
+            `bundle --local || bundle install || true; rake native:${platform} gem`
     };
 }
 exports.loadInput = loadInput;

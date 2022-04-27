@@ -45,6 +45,6 @@ export function loadInput(): Input {
     env: getInput('env') || null,
     command:
       getInput('command') ||
-      `bundle --local || true; rake native:${platform} gem`
+      `bundle --local || bundle install || true; rake native:${platform} gem`
   }
 }
