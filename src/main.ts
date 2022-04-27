@@ -6,7 +6,7 @@ async function run(): Promise<void> {
   try {
     const input = loadInput()
     core.debug(`Compiling native gem for ${input.platform}`)
-    await Promise.all([setupDockerBuildx(), installDeps()])
+    await Promise.all([setupDockerBuildx(input), installDeps()])
 
     await compileGem(input)
   } catch (error) {
@@ -15,13 +15,8 @@ async function run(): Promise<void> {
 }
 
 async function compileGem(input: Input): Promise<void> {
-  const cmd = `
-    set -e
-    bundle --local
-    rake native:${input.platform}} gem
-  `
   try {
-    await exec('rake-compiler-dock', ['bash', '-c', cmd], {
+    await exec('rake-compiler-dock', ['bash', '-c', input.command], {
       cwd: input.directory
     })
   } catch (error) {
@@ -39,7 +34,7 @@ async function installDeps(): Promise<void> {
   }
 }
 
-async function setupDockerBuildx(): Promise<void> {
+async function setupDockerBuildx(input: Input): Promise<void> {
   try {
     await exec('docker', [
       'buildx',
@@ -52,7 +47,21 @@ async function setupDockerBuildx(): Promise<void> {
     core.error('Could not setup buildx driver')
     throw error
   }
-  core.exportVariable('RCD_DOCKER_BUILD', 'docker buildx build')
+
+  try {
+    await exec('docker', ['pull', `rbsys/rcd:${input.platform}`])
+  } catch (error) {
+    core.error('Error pulling rcd image')
+    throw error
+  }
+
+  setEnv('RCD_DOCKER_BUILD', 'docker buildx build')
+  setEnv('RCD_IMAGE', `rbsys/rcd:${input.platform}`)
+}
+
+function setEnv(name: string, value: string): void {
+  core.exportVariable(name, value)
+  process.env[name] = value
 }
 
 run()

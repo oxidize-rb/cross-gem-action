@@ -28,10 +28,10 @@ jobs:
 
       - uses: actions/checkout@v3
         with:
-          repository: oxidize-rb/rb-sys
-          path: rb-sys
+          repository: ianks/rb-rust-gem
+          path: rb-rust-gem
 
       - uses: ./cross-gem-action
         with:
           platform: x86_64-linux
-          directory: rb-sys/examples/rust_reverse
+          directory: rb-rust-gem/examples/rust_ruby_example

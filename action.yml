@@ -5,8 +5,10 @@ inputs:
   platform: 
     required: true
     description: 'The target Ruby platform'
-  directory: # change this
+  directory: 
     description: 'Directory of gem to build'
+  command: 
+    description: 'Command to build gem inside of container'
 runs:
   using: 'node16'
   main: 'dist/index.js'

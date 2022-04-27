@@ -37,7 +37,9 @@ function loadInput() {
     }
     return {
         platform,
-        directory
+        directory,
+        command: (0, core_1.getInput)('command') ||
+            `bundle --local || true; rake native:${platform} gem`
     };
 }
 exports.loadInput = loadInput;
@@ -87,7 +89,7 @@ function run() {
         try {
             const input = (0, input_1.loadInput)();
             core.debug(`Compiling native gem for ${input.platform}`);
-            yield Promise.all([setupDockerBuildx(), installDeps()]);
+            yield Promise.all([setupDockerBuildx(input), installDeps()]);
             yield compileGem(input);
         }
         catch (error) {
@@ -98,13 +100,8 @@ function run() {
 }
 function compileGem(input) {
     return __awaiter(this, void 0, void 0, function* () {
-        const cmd = `
-    set -e
-    bundle --local
-    rake native:${input.platform}} gem
-  `;
         try {
-            yield (0, exec_1.exec)('rake-compiler-dock', ['bash', '-c', cmd], {
+            yield (0, exec_1.exec)('rake-compiler-dock', ['bash', '-c', input.command], {
                 cwd: input.directory
             });
         }
@@ -125,7 +122,7 @@ function installDeps() {
         }
     });
 }
-function setupDockerBuildx() {
+function setupDockerBuildx(input) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield (0, exec_1.exec)('docker', [
@@ -140,8 +137,20 @@ function setupDockerBuildx() {
             core.error('Could not setup buildx driver');
             throw error;
         }
-        core.exportVariable('RCD_DOCKER_BUILD', 'docker buildx build');
+        try {
+            yield (0, exec_1.exec)('docker', ['pull', `rbsys/rcd:${input.platform}`]);
+        }
+        catch (error) {
+            core.error('Error pulling rcd image');
+            throw error;
+        }
+        setEnv('RCD_DOCKER_BUILD', 'docker buildx build');
+        setEnv('RCD_IMAGE', `rbsys/rcd:${input.platform}`);
     });
+}
+function setEnv(name, value) {
+    core.exportVariable(name, value);
+    process.env[name] = value;
 }
 run();
 

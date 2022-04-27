@@ -6,6 +6,7 @@ import {statSync} from 'fs'
 export interface Input {
   platform: string
   directory: string
+  command: string
 }
 
 export const VALID_PLATFORMS = [
@@ -39,6 +40,9 @@ export function loadInput(): Input {
 
   return {
     platform,
-    directory
+    directory,
+    command:
+      getInput('command') ||
+      `bundle --local || true; rake native:${platform} gem`
   }
 }
