@@ -38,6 +38,7 @@ function loadInput() {
     return {
         platform,
         directory,
+        env: (0, core_1.getInput)('env') || '',
         command: (0, core_1.getInput)('command') ||
             `bundle --local || true; rake native:${platform} gem`
     };
@@ -101,7 +102,7 @@ function run() {
 function compileGem(input) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield (0, exec_1.exec)('rake-compiler-dock', ['bash', '-c', input.command], {
+            yield (0, exec_1.exec)('rake-compiler-dock', ['env', input.env, '/bin/bash', '-c', input.command], {
                 cwd: input.directory
             });
         }

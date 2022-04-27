@@ -35,3 +35,5 @@ jobs:
         with:
           platform: x86_64-linux
           directory: rb-rust-gem/examples/rust_ruby_example
+          env: |
+            RUBY_CC_VERSION=3.1.0

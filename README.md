@@ -44,13 +44,18 @@ jobs:
       - uses: oxidize-rb/cross-gem@v1
         with:
           platform: ${{ matrix.platform }}
+          env: | # optional
+            RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
+            SOME_OTHER_ENV=some_value
 ```
 
 ## Inputs
 
-| Name       | Required | Description          | Type   | Default |
-| ---------- | :------: | -------------------- | ------ | ------- |
-| `platform` |          | Target Ruby platform | string |         |
+| Name        | Required | Description                       | Type   | Default |
+| ----------- | :------: | --------------------------------- | ------ | ------- |
+| `platform`  |          | Target Ruby platform              | string |         |
+| `directory` |          | Directory of the Rakefile         | string |         |
+| `env`       |          | Extra env to set in the container | string |         |
 
 ## License
 

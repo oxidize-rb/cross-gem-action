@@ -16,9 +16,13 @@ async function run(): Promise<void> {
 
 async function compileGem(input: Input): Promise<void> {
   try {
-    await exec('rake-compiler-dock', ['bash', '-c', input.command], {
-      cwd: input.directory
-    })
+    await exec(
+      'rake-compiler-dock',
+      ['env', input.env, '/bin/bash', '-c', input.command],
+      {
+        cwd: input.directory
+      }
+    )
   } catch (error) {
     core.error('Error compiling gem')
     throw error

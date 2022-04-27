@@ -6,6 +6,7 @@ import {statSync} from 'fs'
 export interface Input {
   platform: string
   directory: string
+  env: string
   command: string
 }
 
@@ -41,6 +42,7 @@ export function loadInput(): Input {
   return {
     platform,
     directory,
+    env: getInput('env') || '',
     command:
       getInput('command') ||
       `bundle --local || true; rake native:${platform} gem`

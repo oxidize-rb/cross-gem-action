@@ -9,6 +9,8 @@ inputs:
     description: 'Directory of gem to build'
   command: 
     description: 'Command to build gem inside of container'
+  env: 
+    description: 'Extra env vars to set when compiling'
 runs:
   using: 'node16'
   main: 'dist/index.js'
