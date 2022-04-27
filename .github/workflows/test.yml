@@ -38,5 +38,3 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           directory: rb-rust-gem/examples/rust_ruby_example
-          env: |
-            RUBY_CC_VERSION=3.1.0
