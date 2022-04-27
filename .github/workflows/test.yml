@@ -18,7 +18,20 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./
+      - uses: ruby/setup-ruby@v1
         with:
-          milliseconds: 1000
+          ruby-version: '3.1'
+
+      - uses: actions/checkout@v3
+        with:
+          path: cross-gem-action
+
+      - uses: actions/checkout@v3
+        with:
+          repository: oxidize-rb/rb-sys
+          path: rb-sys
+
+      - uses: ./cross-gem-action
+        with:
+          platform: x86_64-linux
+          directory: rb-sys/examples/rust_reverse
