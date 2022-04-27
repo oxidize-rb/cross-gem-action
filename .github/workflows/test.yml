@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - uses: ./cross-gem-action
+      - uses: ./
         with:
           platform: ${{ matrix.platform }}
           directory: __tests__/fixtures/test-gem
