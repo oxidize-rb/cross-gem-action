@@ -175,6 +175,29 @@ run();
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -184,21 +207,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setup = void 0;
-const core_1 = __importDefault(__nccwpck_require__(2186));
+const core = __importStar(__nccwpck_require__(2186));
 const exec_1 = __nccwpck_require__(1514);
 function installDeps() {
     return __awaiter(this, void 0, void 0, function* () {
-        core_1.default.debug(`Installing dependencies`);
+        core.debug(`Installing dependencies`);
         try {
             yield (0, exec_1.exec)('gem', ['install', 'rake-compiler', 'rake-compiler-dock']);
         }
         catch (error) {
-            core_1.default.error('Error compiling gem');
+            core.error('Error compiling gem');
             throw error;
         }
     });
@@ -206,7 +226,7 @@ function installDeps() {
 function setupDocker(input) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core_1.default.debug('Setup docker buildx');
+            core.debug('Setup docker buildx');
             yield (0, exec_1.exec)('docker', [
                 'buildx',
                 'create',
@@ -218,16 +238,16 @@ function setupDocker(input) {
             ]);
         }
         catch (error) {
-            core_1.default.error('Could not setup buildx driver');
+            core.error('Could not setup buildx driver');
             throw error;
         }
         try {
             const image = `rbsys/rcd:${input.platform}`;
-            core_1.default.debug(`Downloading docker image: ${image}`);
+            core.debug(`Downloading docker image: ${image}`);
             yield (0, exec_1.exec)('docker', ['pull', image, '--quiet']);
         }
         catch (error) {
-            core_1.default.error('Error pulling rcd image');
+            core.error('Error pulling rcd image');
             throw error;
         }
         setEnv('RCD_DOCKER_BUILD', 'docker buildx build');
@@ -235,12 +255,12 @@ function setupDocker(input) {
     });
 }
 function setEnv(name, value) {
-    core_1.default.exportVariable(name, value);
+    core.exportVariable(name, value);
     process.env[name] = value;
 }
 function setup(input) {
     return __awaiter(this, void 0, void 0, function* () {
-        core_1.default.debug(`Compiling native gem for ${input.platform}`);
+        core.debug(`Compiling native gem for ${input.platform}`);
         yield Promise.all([setupDocker(input), installDeps()]);
     });
 }

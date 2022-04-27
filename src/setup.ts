@@ -1,5 +1,5 @@
+import * as core from '@actions/core'
 import {Input} from './input'
-import core from '@actions/core'
 import {exec} from '@actions/exec'
 
 async function installDeps(): Promise<void> {
