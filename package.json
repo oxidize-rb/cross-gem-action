@@ -6,8 +6,8 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write '**/*.{ts,md}'",
-    "format-check": "prettier --check '**/*.{ts,md}'",
+    "format": "prettier --write '**/*.{ts,md,yml}'",
+    "format-check": "prettier --check '**/*.{ts,md,yml}'",
     "lint": "eslint --fix src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
@@ -25,8 +25,10 @@
   "author": "Ian Ker-Seymer",
   "license": "MIT",
   "dependencies": {
+    "@actions/artifact": "^1.0.0",
     "@actions/core": "^1.6.0",
-    "@actions/exec": "^1.1.1"
+    "@actions/exec": "^1.1.1",
+    "@actions/glob": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.29",

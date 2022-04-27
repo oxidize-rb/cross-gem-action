@@ -17,6 +17,9 @@ jobs:
           npm run all
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ['x86_64-linux', 'arm64-darwin']
     steps:
       - uses: ruby/setup-ruby@v1
         with:
@@ -33,7 +36,7 @@ jobs:
 
       - uses: ./cross-gem-action
         with:
-          platform: x86_64-linux
+          platform: ${{ matrix.platform }}
           directory: rb-rust-gem/examples/rust_ruby_example
           env: |
             RUBY_CC_VERSION=3.1.0
