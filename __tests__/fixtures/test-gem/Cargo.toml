@@ -1,0 +1,9 @@
+[package]
+name = "test_gem_ext"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rb-sys = "0.8.1"

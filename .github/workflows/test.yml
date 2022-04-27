@@ -26,15 +26,8 @@ jobs:
           ruby-version: '3.1'
 
       - uses: actions/checkout@v3
-        with:
-          path: cross-gem-action
-
-      - uses: actions/checkout@v3
-        with:
-          repository: ianks/rb-rust-gem
-          path: rb-rust-gem
 
       - uses: ./cross-gem-action
         with:
           platform: ${{ matrix.platform }}
-          directory: rb-rust-gem/examples/rust_ruby_example
+          directory: __tests__/fixtures/test-gem

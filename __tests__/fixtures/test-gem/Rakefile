@@ -1,0 +1,26 @@
+require "rake/extensiontask"
+require "bundler"
+
+PLATFORMS = ["x86_64-linux", "arm-linux", "aarch64-linux", "x86_64-darwin", "arm64-darwin", "x64-mingw32", "x64-mingw-ucrt"]
+
+spec = Gem::Specification.new do |s|
+  s.name = "test_gem"
+  s.version = "0.1.0"
+  s.summary = "A Rust extension for Ruby"
+  s.extensions = ["Cargo.toml"]
+  s.authors = ["Ian Ker-Seymer"]
+  s.files = ["Cargo.toml", "Cargo.lock", "src/lib.rs", "lib/test_gem.rb"]
+  s.metadata["cargo_crate_name"] = "test_gem_ext"
+  s.platform = Gem::Platform::RUBY
+  s.extensions = ["extconf.rb"]
+end
+
+Rake::ExtensionTask.new("test_gem_ext", spec) do |ext|
+  ext.ext_dir = __dir__
+  ext.source_pattern = "*.{rs,Cargo.toml}"
+  ext.cross_compile = true
+  ext.cross_platform = PLATFORMS
+end
+
+Gem::PackageTask.new(spec) do |pkg|
+end
