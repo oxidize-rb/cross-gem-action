@@ -90,7 +90,7 @@ function run() {
         try {
             const input = (0, input_1.loadInput)();
             core.debug(`Compiling native gem for ${input.platform}`);
-            yield Promise.all([setupDockerBuildx(input), installDeps()]);
+            yield Promise.all([setupDocker(input), installDeps()]);
             yield compileGem(input);
         }
         catch (error) {
@@ -123,14 +123,17 @@ function installDeps() {
         }
     });
 }
-function setupDockerBuildx(input) {
+function setupDocker(input) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            core.debug('Setup docker buildx');
             yield (0, exec_1.exec)('docker', [
                 'buildx',
                 'create',
                 '--driver',
                 'docker-container',
+                '--name',
+                'cross-gem-builder',
                 '--use'
             ]);
         }
@@ -139,7 +142,9 @@ function setupDockerBuildx(input) {
             throw error;
         }
         try {
-            yield (0, exec_1.exec)('docker', ['pull', `rbsys/rcd:${input.platform}`]);
+            const image = `rbsys/rcd:${input.platform}`;
+            core.debug(`Downloading docker image: ${image}`);
+            yield (0, exec_1.exec)('docker', ['pull', image, '--quiet']);
         }
         catch (error) {
             core.error('Error pulling rcd image');

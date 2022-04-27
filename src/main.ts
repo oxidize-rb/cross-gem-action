@@ -6,7 +6,7 @@ async function run(): Promise<void> {
   try {
     const input = loadInput()
     core.debug(`Compiling native gem for ${input.platform}`)
-    await Promise.all([setupDockerBuildx(input), installDeps()])
+    await Promise.all([setupDocker(input), installDeps()])
 
     await compileGem(input)
   } catch (error) {
@@ -38,13 +38,16 @@ async function installDeps(): Promise<void> {
   }
 }
 
-async function setupDockerBuildx(input: Input): Promise<void> {
+async function setupDocker(input: Input): Promise<void> {
   try {
+    core.debug('Setup docker buildx')
     await exec('docker', [
       'buildx',
       'create',
       '--driver',
       'docker-container',
+      '--name',
+      'cross-gem-builder',
       '--use'
     ])
   } catch (error) {
@@ -53,7 +56,9 @@ async function setupDockerBuildx(input: Input): Promise<void> {
   }
 
   try {
-    await exec('docker', ['pull', `rbsys/rcd:${input.platform}`])
+    const image = `rbsys/rcd:${input.platform}`
+    core.debug(`Downloading docker image: ${image}`)
+    await exec('docker', ['pull', image, '--quiet'])
   } catch (error) {
     core.error('Error pulling rcd image')
     throw error
