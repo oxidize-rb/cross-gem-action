@@ -1,6 +1,6 @@
+import * as artifact from '@actions/artifact'
+import * as glob from '@actions/glob'
 import {Input} from './input'
-import artifact from '@actions/artifact'
-import glob from '@actions/glob'
 import {setOutput} from '@actions/core'
 
 export async function uploadGem(
