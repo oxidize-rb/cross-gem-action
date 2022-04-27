@@ -2,9 +2,11 @@ name: 'cross-gem'
 description: 'Cross compiles a native Ruby gem written in Rust'
 author: 'oxidize-rs'
 inputs:
-  platform: # change this
+  platform: 
     required: true
     description: 'The target Ruby platform'
+  directory: # change this
+    description: 'Directory of gem to build'
 runs:
   using: 'node16'
   main: 'dist/index.js'
