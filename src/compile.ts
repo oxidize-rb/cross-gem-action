@@ -5,14 +5,16 @@ import {exec} from '@actions/exec'
 export async function compileGem(input: Input): Promise<void> {
   core.debug(`Invoking rake-compiler-dock ${input.platform}`)
 
+  const args: string[] = [
+    'env',
+    input.env || '',
+    'bash',
+    '-c',
+    input.command
+  ].filter(item => item !== '')
+
   try {
-    await exec(
-      'rake-compiler-dock',
-      ['env', input.env, '/bin/bash', '-c', input.command],
-      {
-        cwd: input.directory
-      }
-    )
+    await exec('rake-compiler-dock', args, {cwd: input.directory})
   } catch (error) {
     core.error('Error compiling gem')
     throw error

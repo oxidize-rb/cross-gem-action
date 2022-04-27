@@ -45,10 +45,15 @@ const exec_1 = __nccwpck_require__(1514);
 function compileGem(input) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Invoking rake-compiler-dock ${input.platform}`);
+        const args = [
+            'env',
+            input.env || '',
+            'bash',
+            '-c',
+            input.command
+        ].filter(item => item !== '');
         try {
-            yield (0, exec_1.exec)('rake-compiler-dock', ['env', input.env, '/bin/bash', '-c', input.command], {
-                cwd: input.directory
-            });
+            yield (0, exec_1.exec)('rake-compiler-dock', args, { cwd: input.directory });
         }
         catch (error) {
             core.error('Error compiling gem');
@@ -98,7 +103,7 @@ function loadInput() {
     return {
         platform,
         directory,
-        env: (0, core_1.getInput)('env') || '',
+        env: (0, core_1.getInput)('env') || null,
         command: (0, core_1.getInput)('command') ||
             `bundle --local || true; rake native:${platform} gem`
     };
