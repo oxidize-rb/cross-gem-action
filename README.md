@@ -3,7 +3,6 @@
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Join the discussion](https://img.shields.io/badge/slack-chat-blue.svg)](https://join.slack.com/t/oxidize-rb/shared_invite/zt-16zv5tqte-Vi7WfzxCesdo2TqF_RYBCw)
 ![Continuous integration](https://github.com/oxidize-rb/cross-gem-action/workflows/build-test/badge.svg)
-![Dependabot enabled](https://api.dependabot.com/badges/status?host=github&repo=oxidize-rb/cross-gem-action)
 
 This action makes it easy to compile and package native Rubygems that are written in Rust. Under the hood, it uses a customized version [`rake-compiler-dock`](https://github.com/rake-compiler/rake-compiler-dock) to compile a gem, and is meant to be used in tandem with [`rb-sys`](https://github.com/oxidize-rb/rb-sys).
 
