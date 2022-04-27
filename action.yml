@@ -1,8 +1,9 @@
 name: 'cross-gem'
-icon: chevron-right
-color: gray-dark
 description: 'Cross compiles a native Ruby gem written in Rust'
 author: 'oxidize-rs'
+branding:
+  icon: 'chevron-right'
+  color: 'gray-dark'
 inputs:
   platform:
     required: true
