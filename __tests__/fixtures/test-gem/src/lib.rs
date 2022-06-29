@@ -1,10 +1,5 @@
-#[macro_use]
-extern crate rb_sys;
-
 use rb_sys::rb_define_module;
 use std::ffi::CString;
-
-ruby_extension!();
 
 #[allow(non_snake_case)]
 #[no_mangle]
