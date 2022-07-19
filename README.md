@@ -24,14 +24,15 @@ jobs:
     name: Compile native gem
     runs-on: ubuntu-latest
     strategy:
-      platform:
-        - x86_64-linux
-        - aarch64-linux
-        - arm-linux
-        - x86_64-darwin
-        - arm64-darwin
-        - x64-mingw32
-        - x64-mingw-ucrt
+      matrix:
+        platform:
+          - x86_64-linux
+          - aarch64-linux
+          - arm-linux
+          - x86_64-darwin
+          - arm64-darwin
+          - x64-mingw32
+          - x64-mingw-ucrt
     steps:
       - uses: actions/checkout@v2
 
