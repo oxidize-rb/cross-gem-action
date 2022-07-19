@@ -41,7 +41,7 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
-      - uses: oxidize-rb/cross-gem@v1
+      - uses: oxidize-rb/cross-gem-action@v1
         with:
           platform: ${{ matrix.platform }}
           env: | # optional
