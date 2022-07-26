@@ -95,7 +95,7 @@ const fs_1 = __nccwpck_require__(7147);
 const http = new http_client_1.HttpClient('cross-gem-action');
 function fetchValidPlatforms() {
     return __awaiter(this, void 0, void 0, function* () {
-        const res = yield http.get('https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/target-mappings/ruby-to-rust.json');
+        const res = yield http.get('https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/ruby-to-rust.json');
         const body = yield res.readBody();
         const json = JSON.parse(body);
         return Object.keys(json);

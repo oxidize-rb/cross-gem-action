@@ -17,7 +17,7 @@ const http = new HttpClient('cross-gem-action')
 
 async function fetchValidPlatforms(): Promise<string[]> {
   const res = await http.get(
-    'https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/target-mappings/ruby-to-rust.json'
+    'https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/ruby-to-rust.json'
   )
   const body = await res.readBody()
   const json = JSON.parse(body)
