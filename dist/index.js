@@ -122,7 +122,7 @@ function loadInput() {
             env: (0, core_1.getInput)('env') || null,
             setup: (0, core_1.getInput)('setup') || '',
             command: (0, core_1.getInput)('command') ||
-                `bundle --local || bundle install || true; rake native:${platform} gem`
+                `bundle install || gem install rb_sys || true; rake native:${platform} gem`
         };
     });
 }
@@ -265,7 +265,7 @@ function setupDocker(input) {
             throw error;
         }
         try {
-            const image = `rbsys/rcd:${input.platform}`;
+            const image = `rbsys/${input.platform}:${input.version}`;
             core.debug(`Downloading docker image: ${image}`);
             yield (0, exec_1.exec)('docker', ['pull', image, '--quiet']);
         }

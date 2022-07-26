@@ -31,7 +31,7 @@ async function setupDocker(input: Input): Promise<void> {
   }
 
   try {
-    const image = `rbsys/rcd:${input.platform}`
+    const image = `rbsys/${input.platform}:${input.version}`
     core.debug(`Downloading docker image: ${image}`)
     await exec('docker', ['pull', image, '--quiet'])
   } catch (error) {

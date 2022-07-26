@@ -53,6 +53,6 @@ export async function loadInput(): Promise<Input> {
     setup: getInput('setup') || '',
     command:
       getInput('command') ||
-      `bundle --local || bundle install || true; rake native:${platform} gem`
+      `bundle install || gem install rb_sys || true; rake native:${platform} gem`
   }
 }
