@@ -22,7 +22,7 @@ async function setupDocker(input: Input): Promise<void> {
       '--driver',
       'docker-container',
       '--name',
-      'cross-gem-builder',
+      `cross-gem-builder-${input.platform}-${input.version}`,
       '--use'
     ])
   } catch (error) {
@@ -40,7 +40,7 @@ async function setupDocker(input: Input): Promise<void> {
   }
 
   setEnv('RCD_DOCKER_BUILD', 'docker buildx build')
-  setEnv('RCD_IMAGE', `rbsys/rcd:${input.platform}`)
+  setEnv('RCD_IMAGE', `rbsys/${input.platform}:${input.version}`)
 }
 
 function setEnv(name: string, value: string): void {
