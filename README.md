@@ -41,21 +41,35 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
-      - uses: oxidize-rb/cross-gem-action@v1
+      - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
+          version: '0.9.27' # optional
+          setup: | # optional
+            echo "Do something custom before compiling..."
           env: | # optional
             RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
             SOME_OTHER_ENV=some_value
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+
+      - name: Display structure of built gems
+        run: ls -R
+        working-directory: pkg/
 ```
 
 ## Inputs
 
-| Name        | Required | Description                       | Type   | Default |
-| ----------- | :------: | --------------------------------- | ------ | ------- |
-| `platform`  |          | Target Ruby platform              | string |         |
-| `directory` |          | Directory of the Rakefile         | string |         |
-| `env`       |          | Extra env to set in the container | string |         |
+| Name        | Required | Description                             | Type   | Default               |
+| ----------- | :------: | --------------------------------------- | ------ | --------------------- |
+| `platform`  |          | Target Ruby platform                    | string |                       |
+| `directory` |          | Directory of the Rakefile               | string |                       |
+| `env`       |          | Extra env to set in the container       | string |                       |
+| `setup`     |          | Custom setup script for the container   | string |                       |
+| `version`   |          | Version tag for the docker image to use | string | latest rb-sys version |
 
 ## License
 

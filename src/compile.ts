@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import {Input} from './input'
 import {exec} from '@actions/exec'
-import {type} from 'os'
 
 export async function compileGem(input: Input): Promise<void> {
   core.debug(`Invoking rake-compiler-dock ${input.platform}`)

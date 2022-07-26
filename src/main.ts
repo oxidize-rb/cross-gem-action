@@ -6,7 +6,7 @@ import {uploadGem} from './upload'
 
 async function run(): Promise<void> {
   try {
-    const input = loadInput()
+    const input = await loadInput()
 
     await setup(input)
     await compileGem(input)

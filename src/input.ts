@@ -1,5 +1,6 @@
 import {getInput} from '@actions/core'
 import path from 'path'
+import {HttpClient} from '@actions/http-client'
 import {statSync} from 'fs'
 
 // Parsed action input
@@ -12,22 +13,25 @@ export interface Input {
   setup: string | null
 }
 
-export const VALID_PLATFORMS = [
-  'x86_64-linux',
-  'aarch64-linux',
-  'arm-linux',
-  'x86_64-darwin',
-  'arm64-darwin',
-  'x64-mingw32',
-  'x64-mingw-ucrt'
-]
+const http = new HttpClient('cross-gem-action')
 
-export function loadInput(): Input {
+async function fetchValidPlatforms(): Promise<string[]> {
+  const res = await http.get(
+    'https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/target-mappings/ruby-to-rust.json'
+  )
+  const body = await res.readBody()
+  const json = JSON.parse(body)
+
+  return Object.keys(json)
+}
+
+export async function loadInput(): Promise<Input> {
   const platform = getInput('platform', {required: true})
+  const validPlatforms = await fetchValidPlatforms()
 
-  if (!VALID_PLATFORMS.includes(platform)) {
+  if (!validPlatforms.includes(platform)) {
     throw new Error(
-      `Unsupported platform: ${platform}. Must be one of ${VALID_PLATFORMS.join(
+      `Unsupported platform: ${platform}. Must be one of ${validPlatforms.join(
         ', '
       )}`
     )

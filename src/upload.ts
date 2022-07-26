@@ -12,13 +12,16 @@ export async function uploadGem(
   const rootDirectory = input.directory
   const options = {continueOnError: false}
 
-  const uploadResponse = artifactClient.uploadArtifact(
+  const uploadResponse = await artifactClient.uploadArtifact(
     artifactName,
     files,
     rootDirectory,
     options
   )
-  setOutput('artifact-upload-response', JSON.stringify(uploadResponse))
+
+  setOutput('artifact-name', uploadResponse.artifactName)
+  setOutput('artifact-items', uploadResponse.artifactItems)
+
   return uploadResponse
 }
 
