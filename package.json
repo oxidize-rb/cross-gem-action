@@ -25,17 +25,18 @@
   "author": "Ian Ker-Seymer",
   "license": "MIT",
   "dependencies": {
-    "@actions/artifact": "^1.0.0",
-    "@actions/core": "^1.6.0",
+    "@actions/artifact": "^1.1.0",
+    "@actions/core": "^1.9.0",
     "@actions/exec": "^1.1.1",
-    "@actions/glob": "^0.3.0"
+    "@actions/glob": "^0.3.0",
+    "@actions/http-client": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.29",
     "@typescript-eslint/parser": "^5.27.0",
     "@vercel/ncc": "^0.33.4",
     "eslint": "^8.14.0",
-    "eslint-plugin-github": "^4.3.6",
+    "eslint-plugin-github": "^4.3.7",
     "eslint-plugin-jest": "^26.1.5",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
