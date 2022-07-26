@@ -12,6 +12,10 @@ inputs:
     description: 'Directory of gem to build'
   command:
     description: 'Command to build gem inside of container'
+  setup:
+    description: 'Extra setup script to run inside container'
+  version:
+    description: 'Docker version tag for container (corresponds to rb-sys version)'
   env:
     description: 'Extra env vars to set when compiling'
 runs:
