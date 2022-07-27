@@ -42,15 +42,38 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.compileGem = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const exec_1 = __nccwpck_require__(1514);
+const utils_1 = __nccwpck_require__(918);
+const LINKER_MAPPING = {
+    'x86_64-linux': 'x86_64-linux-gnu-gcc',
+    'aarch64-linux': 'aarch64-linux-gnu-gcc',
+    'arm64-darwin': 'aarch64-apple-darwin-clang',
+    'x86_64-darwin': 'x86_64-apple-darwin-clang',
+    'x64-mingw32': 'x86_64-w64-mingw32-gcc',
+    'x64-mingw32-ucrt': 'x86_64-w64-mingw32-gcc'
+};
 function compileGem(input) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Invoking rake-compiler-dock ${input.platform}`);
-        const fullCommand = [input.setup, input.command]
+        const steps = [input.setup, input.command];
+        if (input.useRubyLinkerForCargo) {
+            const rustPlatform = (yield (0, utils_1.fetchRubyToRustMapping)())[input.platform];
+            const envVar = `CARGO_TARGET_${rustPlatform
+                .replace('-', '_')
+                .toUpperCase()}_LINKER`;
+            const linker = LINKER_MAPPING[input.platform];
+            if (linker) {
+                steps.unshift(`export ${envVar}=${linker}`);
+            }
+            else {
+                core.setOutput('warning', `No linker mapping for ${input.platform}`);
+            }
+        }
+        const fullCommand = steps
             .filter(item => item != null && item !== '')
             .join('\n');
         const args = [
             'env',
-            input.env || '',
+            (input.env || '').replace('\n', ' '),
             'bash',
             '-c',
             fullCommand
@@ -90,21 +113,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.loadInput = void 0;
 const core_1 = __nccwpck_require__(2186);
 const path_1 = __importDefault(__nccwpck_require__(1017));
-const http_client_1 = __nccwpck_require__(6255);
 const fs_1 = __nccwpck_require__(7147);
-const http = new http_client_1.HttpClient('cross-gem-action');
-function fetchValidPlatforms() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const res = yield http.get('https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/ruby-to-rust.json');
-        const body = yield res.readBody();
-        const json = JSON.parse(body);
-        return Object.keys(json);
-    });
-}
+const utils_1 = __nccwpck_require__(918);
 function loadInput() {
     return __awaiter(this, void 0, void 0, function* () {
         const platform = (0, core_1.getInput)('platform', { required: true });
-        const validPlatforms = yield fetchValidPlatforms();
+        const validPlatforms = yield (0, utils_1.fetchValidPlatforms)();
         if (!validPlatforms.includes(platform)) {
             throw new Error(`Unsupported platform: ${platform}. Must be one of ${validPlatforms.join(', ')}`);
         }
@@ -119,10 +133,10 @@ function loadInput() {
             platform,
             directory,
             version: (0, core_1.getInput)('version') || '0.9.27',
+            useRubyLinkerForCargo: (0, core_1.getInput)('use-ruby-linker-for-cargo') === 'true',
             env: (0, core_1.getInput)('env') || null,
-            setup: (0, core_1.getInput)('setup') || '',
-            command: (0, core_1.getInput)('command') ||
-                `bundle install || gem install rb_sys || true; rake native:${platform} gem`
+            setup: (0, core_1.getInput)('setup') || 'bundle install || gem install rb_sys',
+            command: (0, core_1.getInput)('command') || `bundle exec rake native:${platform} gem`
         };
     });
 }
@@ -355,6 +369,49 @@ function findGem(input) {
         return globber.glob();
     });
 }
+
+
+/***/ }),
+
+/***/ 918:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.fetchValidPlatforms = exports.fetchRubyToRustMapping = void 0;
+const http_client_1 = __nccwpck_require__(6255);
+const http = new http_client_1.HttpClient('cross-gem-action');
+let RUBY_TO_RUST;
+function fetchRubyToRustMapping() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (RUBY_TO_RUST) {
+            return RUBY_TO_RUST;
+        }
+        const res = yield http.get('https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/ruby-to-rust.json');
+        const body = yield res.readBody();
+        const json = JSON.parse(body);
+        RUBY_TO_RUST = json;
+        return json;
+    });
+}
+exports.fetchRubyToRustMapping = fetchRubyToRustMapping;
+function fetchValidPlatforms() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const mappings = yield fetchRubyToRustMapping();
+        return Object.keys(mappings);
+    });
+}
+exports.fetchValidPlatforms = fetchValidPlatforms;
 
 
 /***/ }),

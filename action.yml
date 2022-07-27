@@ -18,6 +18,8 @@ inputs:
     description: 'Docker version tag for container (corresponds to rb-sys version)'
   env:
     description: 'Extra env vars to set when compiling'
+  use-ruby-linker-for-cargo:
+    description: 'Set the CARGO_TARGET_{TARGET}_LINKER to use the linker from RbConfig'
 runs:
   using: 'node16'
   main: 'dist/index.js'

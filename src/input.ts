@@ -1,7 +1,7 @@
 import {getInput} from '@actions/core'
 import path from 'path'
-import {HttpClient} from '@actions/http-client'
 import {statSync} from 'fs'
+import {fetchValidPlatforms} from './utils'
 
 // Parsed action input
 export interface Input {
@@ -10,19 +10,8 @@ export interface Input {
   version: string
   env: string | null
   command: string
+  useRubyLinkerForCargo: boolean
   setup: string | null
-}
-
-const http = new HttpClient('cross-gem-action')
-
-async function fetchValidPlatforms(): Promise<string[]> {
-  const res = await http.get(
-    'https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/ruby-to-rust.json'
-  )
-  const body = await res.readBody()
-  const json = JSON.parse(body)
-
-  return Object.keys(json)
 }
 
 export async function loadInput(): Promise<Input> {
@@ -49,10 +38,9 @@ export async function loadInput(): Promise<Input> {
     platform,
     directory,
     version: getInput('version') || '0.9.27',
+    useRubyLinkerForCargo: getInput('use-ruby-linker-for-cargo') === 'true',
     env: getInput('env') || null,
-    setup: getInput('setup') || '',
-    command:
-      getInput('command') ||
-      `bundle install || gem install rb_sys || true; rake native:${platform} gem`
+    setup: getInput('setup') || 'bundle install || gem install rb_sys',
+    command: getInput('command') || `bundle exec rake native:${platform} gem`
   }
 }

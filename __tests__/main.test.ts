@@ -15,7 +15,7 @@ test('errors with invalid platform', () => {
   const out = cp.spawnSync(np, [ip], options).stdout.toString()
 
   expect(out).toContain(
-    '::error::Unsupported platform: xafasdf. Must be one of arm-linux, arm64-linux, arm64-darwin'
+    '::error::Unsupported platform: xafasdf. Must be one of arm-linux,'
   )
 })
 
