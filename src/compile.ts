@@ -19,13 +19,15 @@ export async function compileGem(input: Input): Promise<void> {
 
   if (input.useRubyLinkerForCargo) {
     const rustPlatform = (await fetchRubyToRustMapping())[input.platform]
-    const envVar = `CARGO_TARGET_${rustPlatform
+
+    const envVar = `CARGO_TARGET_${rustPlatform}_LINKER`
       .replace('-', '_')
-      .toUpperCase()}_LINKER`
+      .toUpperCase()
+
     const linker = LINKER_MAPPING[input.platform]
 
     if (linker) {
-      steps.unshift(`export ${envVar}=${linker}`)
+      steps.unshift(`export ${envVar}="${linker}"`)
     } else {
       core.setOutput('warning', `No linker mapping for ${input.platform}`)
     }

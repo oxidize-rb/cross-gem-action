@@ -37,7 +37,7 @@ export async function loadInput(): Promise<Input> {
   return {
     platform,
     directory,
-    version: getInput('version') || '0.9.27',
+    version: getInput('version') || '0.9.28',
     useRubyLinkerForCargo: getInput('use-ruby-linker-for-cargo') === 'true',
     env: getInput('env') || null,
     setup: getInput('setup') || 'bundle install || gem install rb_sys',

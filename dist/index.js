@@ -57,12 +57,12 @@ function compileGem(input) {
         const steps = [input.setup, input.command];
         if (input.useRubyLinkerForCargo) {
             const rustPlatform = (yield (0, utils_1.fetchRubyToRustMapping)())[input.platform];
-            const envVar = `CARGO_TARGET_${rustPlatform
+            const envVar = `CARGO_TARGET_${rustPlatform}_LINKER`
                 .replace('-', '_')
-                .toUpperCase()}_LINKER`;
+                .toUpperCase();
             const linker = LINKER_MAPPING[input.platform];
             if (linker) {
-                steps.unshift(`export ${envVar}=${linker}`);
+                steps.unshift(`export ${envVar}="${linker}"`);
             }
             else {
                 core.setOutput('warning', `No linker mapping for ${input.platform}`);
@@ -132,7 +132,7 @@ function loadInput() {
         return {
             platform,
             directory,
-            version: (0, core_1.getInput)('version') || '0.9.27',
+            version: (0, core_1.getInput)('version') || '0.9.28',
             useRubyLinkerForCargo: (0, core_1.getInput)('use-ruby-linker-for-cargo') === 'true',
             env: (0, core_1.getInput)('env') || null,
             setup: (0, core_1.getInput)('setup') || 'bundle install || gem install rb_sys',
