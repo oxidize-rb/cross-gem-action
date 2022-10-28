@@ -10,12 +10,16 @@ inputs:
     description: 'The target Ruby platform'
   directory:
     description: 'Directory of gem to build'
+  ruby-versions:
+    description: 'Comma seperated list of Ruby versions to build for'
+    default: '3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3'
   command:
     description: 'Command to build gem inside of container'
   setup:
     description: 'Extra setup script to run inside container'
   version:
     description: 'Docker version tag for container (corresponds to rb-sys version)'
+    default: "0.9.34"
   env:
     description: 'Extra env vars to set when compiling'
   use-ruby-linker-for-cargo:
