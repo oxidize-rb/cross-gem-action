@@ -25,3 +25,37 @@ export async function fetchValidPlatforms(): Promise<string[]> {
 
   return Object.keys(mappings)
 }
+
+export function parseEnvString(env: string): {[k: string]: string} {
+  const result: {[k: string]: string} = {}
+
+  for (const line of env.split('\n')) {
+    const [key, value] = line.split('=', 2)
+
+    if (key && value && key.match(/^[a-zA-Z0-9_]+$/)) {
+      const quoteRemoved = value.replace(/^"|"$/g, '').replace(/^'|'$/g, '')
+      result[key] = quoteRemoved
+    }
+  }
+
+  return result
+}
+
+export function shellEscape(
+  arg: string | null | undefined,
+  quoted = false
+): string {
+  if (arg == null) {
+    return ''
+  }
+  // eslint-disable-next-line no-control-regex
+  let result = arg.replace(/[\0\u0008\u001B\u009B]/gu, '')
+
+  if (quoted) {
+    result = result.replace(/'/gu, `'\\''`)
+  }
+
+  result = result.replace(/\r(?!\n)/gu, '')
+
+  return result
+}

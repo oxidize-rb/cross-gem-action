@@ -27,6 +27,7 @@ jobs:
       matrix:
         platform:
           - x86_64-linux
+          - x86_64-linux-musl
           - aarch64-linux
           - arm-linux
           - x86_64-darwin
@@ -39,16 +40,15 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: true
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.platform }}
-          version: '0.9.27' # optional
+          version: '0.9.34' # optional
+          ruby-versions: '3.1, 3.0, 2.7' # optional
           setup: | # optional
             echo "Do something custom before compiling..."
           env: | # optional
-            RUBY_CC_VERSION=3.1.0:3.0.0:2.7.0
             SOME_OTHER_ENV=some_value
 
       - uses: actions/download-artifact@v3

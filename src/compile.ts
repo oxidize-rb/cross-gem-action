@@ -1,10 +1,11 @@
 import * as core from '@actions/core'
 import {Input} from './input'
 import {exec} from '@actions/exec'
-import {fetchRubyToRustMapping} from './utils'
+import {fetchRubyToRustMapping, parseEnvString, shellEscape} from './utils'
 
 const LINKER_MAPPING: {[k: string]: string | undefined} = {
   'x86_64-linux': 'x86_64-linux-gnu-gcc',
+  'x86_64-linux-musl': 'x86_64-unknown-linux-musl-gcc',
   'aarch64-linux': 'aarch64-linux-gnu-gcc',
   'arm64-darwin': 'aarch64-apple-darwin-clang',
   'x86_64-darwin': 'x86_64-apple-darwin-clang',
@@ -12,10 +13,23 @@ const LINKER_MAPPING: {[k: string]: string | undefined} = {
   'x64-mingw32-ucrt': 'x86_64-w64-mingw32-gcc'
 }
 
-export async function compileGem(input: Input): Promise<void> {
+export async function compileGem(
+  input: Input,
+  executor: typeof exec | undefined = exec
+): Promise<void> {
   core.debug(`Invoking rake-compiler-dock ${input.platform}`)
 
-  const steps = [input.setup, input.command]
+  const steps = []
+  const parsedEnv = parseEnvString(input.env || '')
+  const versionString = input.rubyVersions.join(':')
+
+  for (const [key, val] of Object.entries(parsedEnv)) {
+    steps.push(`export ${key}='${shellEscape(val, true)}'`)
+  }
+
+  if (!parsedEnv.RUBY_CC_VERSION) {
+    steps.push(`export RUBY_CC_VERSION='${versionString}'`)
+  }
 
   if (input.useRubyLinkerForCargo) {
     const rustPlatform = (await fetchRubyToRustMapping())[input.platform]
@@ -27,26 +41,30 @@ export async function compileGem(input: Input): Promise<void> {
     const linker = LINKER_MAPPING[input.platform]
 
     if (linker) {
-      steps.unshift(`export ${envVar}="${linker}"`)
+      steps.push(`export ${envVar}='${linker}'`)
     } else {
       core.setOutput('warning', `No linker mapping for ${input.platform}`)
     }
+  }
+
+  if (input.setup) {
+    steps.push(shellEscape(input.setup))
+  }
+
+  if (input.command) {
+    steps.push(shellEscape(input.command))
   }
 
   const fullCommand = steps
     .filter(item => item != null && item !== '')
     .join('\n')
 
-  const args: string[] = [
-    'env',
-    (input.env || '').replace('\n', ' '),
-    'bash',
-    '-c',
-    fullCommand
-  ].filter(item => item !== '')
+  const args: string[] = ['bash', '-c', fullCommand]
 
   try {
-    await exec('rake-compiler-dock', args, {cwd: input.directory})
+    await executor('rake-compiler-dock', args, {
+      cwd: input.directory
+    })
   } catch (error) {
     core.error('Error compiling gem')
     throw error
