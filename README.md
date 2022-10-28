@@ -63,13 +63,14 @@ jobs:
 
 ## Inputs
 
-| Name        | Required | Description                             | Type   | Default               |
-| ----------- | :------: | --------------------------------------- | ------ | --------------------- |
-| `platform`  |          | Target Ruby platform                    | string |                       |
-| `directory` |          | Directory of the Rakefile               | string |                       |
-| `env`       |          | Extra env to set in the container       | string |                       |
-| `setup`     |          | Custom setup script for the container   | string |                       |
-| `version`   |          | Version tag for the docker image to use | string | latest rb-sys version |
+| Name            | Required | Description                             | Type   | Default                             |
+| --------------- | :------: | --------------------------------------- | ------ | ----------------------------------- |
+| `platform`      |          | Target Ruby platform                    | string |                                     |
+| `ruby-versions` |          | Ruby versions to build for              | string | `3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3` |
+| `directory`     |          | Directory of the Rakefile               | string |                                     |
+| `env`           |          | Extra env to set in the container       | string |                                     |
+| `setup`         |          | Custom setup script for the container   | string |                                     |
+| `version`       |          | Version tag for the docker image to use | string | latest rb-sys version               |
 
 ## License
 
