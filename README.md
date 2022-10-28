@@ -41,7 +41,7 @@ jobs:
         with:
           ruby-version: '3.1'
 
-      - uses: oxidize-rb/cross-gem-action@main
+      - uses: oxidize-rb/cross-gem-action@v7
         with:
           platform: ${{ matrix.platform }}
           version: '0.9.34' # optional
