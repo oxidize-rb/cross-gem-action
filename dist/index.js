@@ -45,16 +45,25 @@ const exec_1 = __nccwpck_require__(1514);
 const utils_1 = __nccwpck_require__(918);
 const LINKER_MAPPING = {
     'x86_64-linux': 'x86_64-linux-gnu-gcc',
+    'x86_64-linux-musl': 'x86_64-unknown-linux-musl-gcc',
     'aarch64-linux': 'aarch64-linux-gnu-gcc',
     'arm64-darwin': 'aarch64-apple-darwin-clang',
     'x86_64-darwin': 'x86_64-apple-darwin-clang',
     'x64-mingw32': 'x86_64-w64-mingw32-gcc',
     'x64-mingw32-ucrt': 'x86_64-w64-mingw32-gcc'
 };
-function compileGem(input) {
+function compileGem(input, executor = exec_1.exec) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Invoking rake-compiler-dock ${input.platform}`);
-        const steps = [input.setup, input.command];
+        const steps = [];
+        const parsedEnv = (0, utils_1.parseEnvString)(input.env || '');
+        const versionString = input.rubyVersions.join(':');
+        for (const [key, val] of Object.entries(parsedEnv)) {
+            steps.push(`export ${key}='${(0, utils_1.shellEscape)(val, true)}'`);
+        }
+        if (!parsedEnv.RUBY_CC_VERSION) {
+            steps.push(`export RUBY_CC_VERSION='${versionString}'`);
+        }
         if (input.useRubyLinkerForCargo) {
             const rustPlatform = (yield (0, utils_1.fetchRubyToRustMapping)())[input.platform];
             const envVar = `CARGO_TARGET_${rustPlatform}_LINKER`
@@ -62,24 +71,26 @@ function compileGem(input) {
                 .toUpperCase();
             const linker = LINKER_MAPPING[input.platform];
             if (linker) {
-                steps.unshift(`export ${envVar}="${linker}"`);
+                steps.push(`export ${envVar}='${linker}'`);
             }
             else {
                 core.setOutput('warning', `No linker mapping for ${input.platform}`);
             }
         }
+        if (input.setup) {
+            steps.push((0, utils_1.shellEscape)(input.setup));
+        }
+        if (input.command) {
+            steps.push((0, utils_1.shellEscape)(input.command));
+        }
         const fullCommand = steps
             .filter(item => item != null && item !== '')
             .join('\n');
-        const args = [
-            'env',
-            (input.env || '').replace('\n', ' '),
-            'bash',
-            '-c',
-            fullCommand
-        ].filter(item => item !== '');
+        const args = ['bash', '-c', fullCommand];
         try {
-            yield (0, exec_1.exec)('rake-compiler-dock', args, { cwd: input.directory });
+            yield executor('rake-compiler-dock', args, {
+                cwd: input.directory
+            });
         }
         catch (error) {
             core.error('Error compiling gem');
@@ -123,6 +134,7 @@ function loadInput() {
             throw new Error(`Unsupported platform: ${platform}. Must be one of ${validPlatforms.join(', ')}`);
         }
         const directory = (0, core_1.getInput)('directory') || process.cwd();
+        const rubyVersions = parseRubyVersions((0, core_1.getInput)('ruby-versions'));
         try {
             (0, fs_1.statSync)(path_1.default.join(directory, 'Rakefile')).isFile();
         }
@@ -132,7 +144,8 @@ function loadInput() {
         return {
             platform,
             directory,
-            version: (0, core_1.getInput)('version') || '0.9.28',
+            rubyVersions,
+            version: (0, core_1.getInput)('version'),
             useRubyLinkerForCargo: (0, core_1.getInput)('use-ruby-linker-for-cargo') === 'true',
             env: (0, core_1.getInput)('env') || null,
             setup: (0, core_1.getInput)('setup') || 'bundle install || gem install rb_sys',
@@ -141,6 +154,26 @@ function loadInput() {
     });
 }
 exports.loadInput = loadInput;
+function parseRubyVersions(input) {
+    const rawVersions = input.split(',').map(s => s.trim());
+    // Add a patch version if it's missing
+    const sanitizedVersions = rawVersions
+        .map(version => {
+        return version.split('.').length === 2 ? `${version}.0` : version;
+    })
+        .sort(undefined)
+        .reverse();
+    // Remove duplicates
+    const filtered = sanitizedVersions.filter((version, index) => sanitizedVersions.indexOf(version) === index);
+    // Ensure valid versions
+    for (const version of filtered) {
+        if (!version.match(/^\d\.\d\.0$/)) {
+            throw new Error(`Invalid Ruby version: ${version}`);
+        }
+    }
+    (0, core_1.info)(`Using Ruby versions: ${filtered.join(', ')}`);
+    return filtered;
+}
 
 
 /***/ }),
@@ -388,7 +421,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchValidPlatforms = exports.fetchRubyToRustMapping = void 0;
+exports.shellEscape = exports.parseEnvString = exports.fetchValidPlatforms = exports.fetchRubyToRustMapping = void 0;
 const http_client_1 = __nccwpck_require__(6255);
 const http = new http_client_1.HttpClient('cross-gem-action');
 let RUBY_TO_RUST;
@@ -412,6 +445,31 @@ function fetchValidPlatforms() {
     });
 }
 exports.fetchValidPlatforms = fetchValidPlatforms;
+function parseEnvString(env) {
+    const result = {};
+    for (const line of env.split('\n')) {
+        const [key, value] = line.split('=', 2);
+        if (key && value && key.match(/^[a-zA-Z0-9_]+$/)) {
+            const quoteRemoved = value.replace(/^"|"$/g, '').replace(/^'|'$/g, '');
+            result[key] = quoteRemoved;
+        }
+    }
+    return result;
+}
+exports.parseEnvString = parseEnvString;
+function shellEscape(arg, quoted = false) {
+    if (arg == null) {
+        return '';
+    }
+    // eslint-disable-next-line no-control-regex
+    let result = arg.replace(/[\0\u0008\u001B\u009B]/gu, '');
+    if (quoted) {
+        result = result.replace(/'/gu, `'\\''`);
+    }
+    result = result.replace(/\r(?!\n)/gu, '');
+    return result;
+}
+exports.shellEscape = shellEscape;
 
 
 /***/ }),
