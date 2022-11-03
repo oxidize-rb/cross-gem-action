@@ -17,6 +17,9 @@ inputs:
     description: 'Command to build gem inside of container'
   setup:
     description: 'Extra setup script to run inside container'
+  artifact-name:
+    description: 'Name of the uploaded artifact'
+    default: 'cross-gem'
   version:
     description: 'Docker version tag for container (corresponds to rb-sys version)'
     default: "latest"

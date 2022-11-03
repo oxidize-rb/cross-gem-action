@@ -1,13 +1,13 @@
 import * as artifact from '@actions/artifact'
 import * as glob from '@actions/glob'
 import {Input} from './input'
-import {setOutput} from '@actions/core'
+import {getInput, setOutput} from '@actions/core'
 
 export async function uploadGem(
   input: Input
 ): Promise<artifact.UploadResponse> {
   const artifactClient = artifact.create()
-  const artifactName = 'cross-gem'
+  const artifactName = getInput('artifact-name')
   const files = await findGem(input)
   const rootDirectory = input.directory
   const options = {continueOnError: false}
