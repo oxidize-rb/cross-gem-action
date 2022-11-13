@@ -19,7 +19,7 @@ inputs:
     description: 'Extra setup script to run inside container'
   version:
     description: 'Docker version tag for container (corresponds to rb-sys version)'
-    default: "0.9.34"
+    default: "latest"
   env:
     description: 'Extra env vars to set when compiling'
   use-ruby-linker-for-cargo:
