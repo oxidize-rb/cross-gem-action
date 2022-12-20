@@ -384,7 +384,7 @@ const core_1 = __nccwpck_require__(2186);
 function uploadGem(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const artifactClient = artifact.create();
-        const artifactName = 'cross-gem';
+        const artifactName = (0, core_1.getInput)('artifact-name');
         const files = yield findGem(input);
         const rootDirectory = input.directory;
         const options = { continueOnError: false };
