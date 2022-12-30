@@ -35,7 +35,7 @@ export async function compileGem(
     const rustPlatform = (await fetchRubyToRustMapping())[input.platform]
 
     const envVar = `CARGO_TARGET_${rustPlatform}_LINKER`
-      .replace('-', '_')
+      .replace(/-/g, '_')
       .toUpperCase()
 
     const linker = LINKER_MAPPING[input.platform]

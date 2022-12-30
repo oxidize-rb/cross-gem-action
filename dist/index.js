@@ -67,7 +67,7 @@ function compileGem(input, executor = exec_1.exec) {
         if (input.useRubyLinkerForCargo) {
             const rustPlatform = (yield (0, utils_1.fetchRubyToRustMapping)())[input.platform];
             const envVar = `CARGO_TARGET_${rustPlatform}_LINKER`
-                .replace('-', '_')
+                .replace(/-/g, '_')
                 .toUpperCase();
             const linker = LINKER_MAPPING[input.platform];
             if (linker) {

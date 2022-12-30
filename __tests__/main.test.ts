@@ -156,7 +156,7 @@ test('compiling cargo linker for ruby', async () => {
     [
       'bash',
       '-c',
-      "export RUBY_CC_VERSION='3.1.0:3.0.0'\nexport CARGO_TARGET_X86_64_UNKNOWN-LINUX-GNU_LINKER='x86_64-linux-gnu-gcc'\nrake compile"
+      "export RUBY_CC_VERSION='3.1.0:3.0.0'\nexport CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER='x86_64-linux-gnu-gcc'\nrake compile"
     ],
     expect.anything()
   )
