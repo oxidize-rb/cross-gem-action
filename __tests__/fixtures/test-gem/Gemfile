@@ -2,6 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "rb_sys", "~> 0.9.34"
+gem "rb_sys", "~> 0.9.40"
 gem "rake"
 gem "rake-compiler"
