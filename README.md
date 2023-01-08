@@ -66,7 +66,7 @@ jobs:
 | Name            | Required | Description                             | Type   | Default                             |
 | --------------- | :------: | --------------------------------------- | ------ | ----------------------------------- |
 | `platform`      |   Yes    | Target Ruby platform                    | string |                                     |
-| `ruby-versions` |          | Ruby versions to build for              | string | `3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3` |
+| `ruby-versions` |          | Ruby versions to build for              | string | `3.2, 3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3` |
 | `directory`     |          | Directory of the Rakefile               | string |                                     |
 | `env`           |          | Extra env to set in the container       | string |                                     |
 | `setup`         |          | Custom setup script for the container   | string |                                     |
