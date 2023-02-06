@@ -23,6 +23,8 @@ jobs:
       - name: Approve Dependabot PR
         uses: hmarr/auto-approve-action@v3
         if: ${{steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'}}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge Dependabot PR
         run: gh pr merge --auto --squash "$PR_URL"
