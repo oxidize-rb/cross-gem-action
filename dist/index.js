@@ -223,6 +223,7 @@ const setup_1 = __nccwpck_require__(7391);
 const upload_1 = __nccwpck_require__(4831);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        core.warning('This action is deprecated. Please use oxidize-rb/actions/cross-gem instead (https://github.com/oxidize-rb/actions/blob/main/cross-gem/readme.md).');
         try {
             const input = yield (0, input_1.loadInput)();
             yield (0, setup_1.setup)(input);

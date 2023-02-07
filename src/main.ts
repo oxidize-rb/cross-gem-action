@@ -5,6 +5,10 @@ import {setup} from './setup'
 import {uploadGem} from './upload'
 
 async function run(): Promise<void> {
+  core.warning(
+    'This action is deprecated. Please use oxidize-rb/actions/cross-gem instead (https://github.com/oxidize-rb/actions/blob/main/cross-gem/readme.md).'
+  )
+
   try {
     const input = await loadInput()
 
