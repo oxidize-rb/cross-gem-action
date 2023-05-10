@@ -1,3 +1,5 @@
+# ARCHIVED: use [oxidize-rb/actions/cross-gem](https://github.com/oxidize-rb/actions/blob/main/cross-gem/readme.md) instead
+
 # Cross Gem Action
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
